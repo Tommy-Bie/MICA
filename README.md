@@ -1,4 +1,4 @@
-# MICA
+# MICA \:gem:
 This is the official implementation of the AAAI 2024 paper *MICA: Towards Explainable Skin Lesion Diagnosis via Multi-level Image-Concept Alignment*.
 
 
