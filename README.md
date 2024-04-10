@@ -1,2 +1,0 @@
-# MICA
-Implementation of MICA.
