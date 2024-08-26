@@ -12,7 +12,6 @@ class BertEncoder(nn.Module):
         self.aggregate_method = cfg.model.text.aggregate_method
         self.norm = cfg.model.text.norm
         self.embedding_dim = cfg.model.text.embedding_dim
-        self.freeze_bert = cfg.model.text.freeze_bert
         self.agg_tokens = cfg.model.text.agg_tokens
 
         self.model = AutoModel.from_pretrained(
@@ -23,11 +22,6 @@ class BertEncoder(nn.Module):
         self.idxtoword = {v: k for k, v in self.tokenizer.get_vocab().items()}
 
         self.emb_global, self.emb_local = None, None
-
-        if self.freeze_bert is True:
-            print("Freezing BERT model")
-            for param in self.model.parameters():
-                param.requires_grad = False
 
     def aggregate_tokens(self, embeddings, caption_ids):
 
@@ -98,20 +92,20 @@ class BertEncoder(nn.Module):
             all_embeddings = outputs[2]
             embeddings = torch.stack(
                 all_embeddings[-self.last_n_layers :]
-            )  # layers, batch, sent_len, embedding size e.g. (4 * 32 * 15 * 768)
+            )  
 
-            embeddings = embeddings.permute(1, 0, 2, 3)  # (batch_size * layers * sent_len * emb_size)
+            embeddings = embeddings.permute(1, 0, 2, 3) 
 
             if self.agg_tokens:
-                embeddings, sents = self.aggregate_tokens(embeddings, ids)  # sents: (batch_size * sent_len(15))
+                embeddings, sents = self.aggregate_tokens(embeddings, ids) 
             else:
                 sents = [[self.idxtoword[w.item()] for w in sent] for sent in ids]
 
-            sent_embeddings = embeddings.mean(axis=2)  # (batch_size * layers * emb_size)  (32 * 4 * 768)
+            sent_embeddings = embeddings.mean(axis=2) 
 
             if self.aggregate_method == "sum":
-                word_embeddings = embeddings.sum(axis=1)  # (batch_size * sent_len * emb_size) (32 * 15 * 768)
-                sent_embeddings = sent_embeddings.sum(axis=1)  # (batch_size * emb_size) (32 * 768)
+                word_embeddings = embeddings.sum(axis=1)
+                sent_embeddings = sent_embeddings.sum(axis=1) 
             elif self.aggregate_method == "mean":
                 word_embeddings = embeddings.mean(axis=1)
                 sent_embeddings = sent_embeddings.mean(axis=1)
@@ -124,11 +118,11 @@ class BertEncoder(nn.Module):
             word_embeddings, sent_embeddings = outputs[0], outputs[1]
 
         batch_dim, num_words, feat_dim = word_embeddings.shape
-        word_embeddings = word_embeddings.view(batch_dim * num_words, feat_dim)  # (480, 768)
+        word_embeddings = word_embeddings.view(batch_dim * num_words, feat_dim) 
         if self.emb_local is not None:
             word_embeddings = self.emb_local(word_embeddings)
         word_embeddings = word_embeddings.view(batch_dim, num_words, self.embedding_dim)
-        word_embeddings = word_embeddings.permute(0, 2, 1)  # (batch_size, emb_size, num_words)
+        word_embeddings = word_embeddings.permute(0, 2, 1) 
 
         if self.emb_global is not None:
             sent_embeddings = self.emb_global(sent_embeddings)
@@ -143,6 +137,6 @@ class BertEncoder(nn.Module):
 
         # word_embeddings: (batch_size, emb_size, num_words)
         # sent_embeddings: (batch_size, emb_size)
-        # sents:           (batch_size, num_words)  NOTE: num_words == sent_len == 15
+        # sents:           (batch_size, num_words)
 
         return word_embeddings, sent_embeddings, sents

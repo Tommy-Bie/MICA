@@ -41,7 +41,7 @@ class MICA(nn.Module):
         all_concepts = pickle.load(open(CAV_FILE, 'rb'))
         all_concept_names = list(all_concepts.keys())
         print(f"Bank path: {CAV_FILE}. {len(all_concept_names)} concepts will be used.")
-        self.concept_bank = utils.ConceptBank(all_concepts, "cuda:0")  # TODO: remove device
+        self.concept_bank = utils.ConceptBank(all_concepts, "cuda:0")  # set device
         self.cavs = self.concept_bank.vectors
         self.intercepts = self.concept_bank.intercepts
         self.norms = self.concept_bank.norms

@@ -1,4 +1,3 @@
-"""Adapted from: https://github.com/mrlibw/ControlGAN"""
 
 import numpy as np
 import torch

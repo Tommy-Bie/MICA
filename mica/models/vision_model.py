@@ -18,7 +18,7 @@ class ImageEncoder(nn.Module):
         if "ViT" in cfg.model.vision.model_name:
             self.model, vision_width = ViT.createViT(output_dim=768)
             self.feature_dim = vision_width
-            self.extract_layer = nn.Linear(325, 361)  # NOTE: get local features
+            self.extract_layer = nn.Linear(325, 361) 
             # self.model = torch.jit.load(VIT_BASE_16, map_location="cuda")
             # self.visual = self.model.visual
             # self.model.load_state_dict(state_dict)

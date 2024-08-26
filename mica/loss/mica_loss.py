@@ -1,6 +1,3 @@
-"""
-Adapted from: https://github.com/mrlibw/ControlGAN
-"""
 
 import torch
 import torch.nn as nn

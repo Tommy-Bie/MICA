@@ -7,7 +7,6 @@ import os
 import copy
 
 from sklearn.metrics import average_precision_score, roc_auc_score, f1_score, accuracy_score
-from torchmetrics import F1, Accuracy, Recall, Precision, Specificity
 from .. import builder
 from .. import mica
 from pytorch_lightning.core import LightningModule
