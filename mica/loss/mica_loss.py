@@ -54,7 +54,7 @@ def attention_fn(query, context, temp1):
     return weightedContext, attn.view(batch_size, -1, ih, iw)
 
 
-def mica_loss(cnn_code, rnn_code, eps=1e-8, temp3=10.0):
+def global_loss(cnn_code, rnn_code, eps=1e-8, temp3=10.0):
 
     batch_size = cnn_code.shape[0]
     labels = Variable(torch.LongTensor(range(batch_size))).to(cnn_code.device)
